@@ -1,0 +1,53 @@
+{
+    "rules": [],
+    "models": [
+        {
+            "classname": "Configuration",
+            "code": "class Configuration(Base):  # type: ignore\n    \"\"\"\n    description: Stores various system configuration settings.\n    \"\"\"\n    __tablename__ = 'configuration'\n    _s_collection_name = 'Configuration'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    key = Column(String)\n    value = Column(String)"
+        },
+        {
+            "classname": "Profile",
+            "code": "class Profile(Base):  # type: ignore\n    \"\"\"\n    description: Stores additional info about the user.\n    \"\"\"\n    __tablename__ = 'profile'\n    _s_collection_name = 'Profile'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    bio = Column(String)\n    date_of_birth = Column(Date)\n    user_id = Column(ForeignKey('user.id'))\n\n    # parent relationships (access parent)\n    user : Mapped[\"User\"] = relationship(foreign_keys='[Profile.user_id]', back_populates=(\"ProfileList\"))\n\n    # child relationships (access children)\n    UserList : Mapped[List[\"User\"]] = relationship(foreign_keys='[User.profile_id]', back_populates=\"profile\")"
+        },
+        {
+            "classname": "Role",
+            "code": "class Role(Base):  # type: ignore\n    \"\"\"\n    description: Defines different roles within the system.\n    \"\"\"\n    __tablename__ = 'role'\n    _s_collection_name = 'Role'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String)\n    description = Column(String)\n\n    # parent relationships (access parent)\n\n    # child relationships (access children)\n    UserRoleList : Mapped[List[\"UserRole\"]] = relationship(back_populates=\"role\")"
+        },
+        {
+            "classname": "Team",
+            "code": "class Team(Base):  # type: ignore\n    \"\"\"\n    description: Represents a team within the system.\n    \"\"\"\n    __tablename__ = 'team'\n    _s_collection_name = 'Team'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String)\n    description = Column(String)\n\n    # parent relationships (access parent)\n\n    # child relationships (access children)\n    UserTeamList : Mapped[List[\"UserTeam\"]] = relationship(back_populates=\"team\")"
+        },
+        {
+            "classname": "User",
+            "code": "class User(Base):  # type: ignore\n    \"\"\"\n    description: Represents a system user.\n    \"\"\"\n    __tablename__ = 'user'\n    _s_collection_name = 'User'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String)\n    email = Column(String)\n    created_at = Column(DateTime)\n    profile_id = Column(ForeignKey('profile.id'))\n\n    # parent relationships (access parent)\n    profile : Mapped[\"Profile\"] = relationship(foreign_keys='[User.profile_id]', back_populates=(\"UserList\"))\n\n    # child relationships (access children)\n    ProfileList : Mapped[List[\"Profile\"]] = relationship(foreign_keys='[Profile.user_id]', back_populates=\"user\")\n    AssetList : Mapped[List[\"Asset\"]] = relationship(back_populates=\"owner\")\n    AuditLogList : Mapped[List[\"AuditLog\"]] = relationship(back_populates=\"user\")\n    DepartmentList : Mapped[List[\"Department\"]] = relationship(back_populates=\"head\")\n    ProjectList : Mapped[List[\"Project\"]] = relationship(back_populates=\"lead\")\n    TaskList : Mapped[List[\"Task\"]] = relationship(back_populates=\"assigned_to\")\n    UserRoleList : Mapped[List[\"UserRole\"]] = relationship(back_populates=\"user\")\n    UserTeamList : Mapped[List[\"UserTeam\"]] = relationship(back_populates=\"user\")"
+        },
+        {
+            "classname": "Asset",
+            "code": "class Asset(Base):  # type: ignore\n    \"\"\"\n    description: Represents assets owned by users.\n    \"\"\"\n    __tablename__ = 'asset'\n    _s_collection_name = 'Asset'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String)\n    description = Column(String)\n    owner_id = Column(ForeignKey('user.id'))\n\n    # parent relationships (access parent)\n    owner : Mapped[\"User\"] = relationship(back_populates=(\"AssetList\"))"
+        },
+        {
+            "classname": "AuditLog",
+            "code": "class AuditLog(Base):  # type: ignore\n    \"\"\"\n    description: Keeps track of user activities.\n    \"\"\"\n    __tablename__ = 'audit_log'\n    _s_collection_name = 'AuditLog'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    action = Column(String)\n    user_id = Column(ForeignKey('user.id'))\n    timestamp = Column(DateTime)\n\n    # parent relationships (access parent)\n    user : Mapped[\"User\"] = relationship(back_populates=(\"AuditLogList\"))"
+        },
+        {
+            "classname": "Department",
+            "code": "class Department(Base):  # type: ignore\n    \"\"\"\n    description: Defines departments within the company.\n    \"\"\"\n    __tablename__ = 'department'\n    _s_collection_name = 'Department'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String)\n    head_id = Column(ForeignKey('user.id'))\n\n    # parent relationships (access parent)\n    head : Mapped[\"User\"] = relationship(back_populates=(\"DepartmentList\"))"
+        },
+        {
+            "classname": "Project",
+            "code": "class Project(Base):  # type: ignore\n    \"\"\"\n    description: Represents projects within the organization.\n    \"\"\"\n    __tablename__ = 'project'\n    _s_collection_name = 'Project'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    name = Column(String)\n    description = Column(String)\n    lead_id = Column(ForeignKey('user.id'))\n\n    # parent relationships (access parent)\n    lead : Mapped[\"User\"] = relationship(back_populates=(\"ProjectList\"))"
+        },
+        {
+            "classname": "Task",
+            "code": "class Task(Base):  # type: ignore\n    \"\"\"\n    description: Represents tasks assigned to users.\n    \"\"\"\n    __tablename__ = 'task'\n    _s_collection_name = 'Task'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    title = Column(String)\n    description = Column(String)\n    assigned_to_id = Column(ForeignKey('user.id'))\n    status = Column(String)\n\n    # parent relationships (access parent)\n    assigned_to : Mapped[\"User\"] = relationship(back_populates=(\"TaskList\"))"
+        },
+        {
+            "classname": "UserRole",
+            "code": "class UserRole(Base):  # type: ignore\n    \"\"\"\n    description: Associative table connecting users with roles.\n    \"\"\"\n    __tablename__ = 'user_role'\n    _s_collection_name = 'UserRole'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    user_id = Column(ForeignKey('user.id'))\n    role_id = Column(ForeignKey('role.id'))\n\n    # parent relationships (access parent)\n    role : Mapped[\"Role\"] = relationship(back_populates=(\"UserRoleList\"))\n    user : Mapped[\"User\"] = relationship(back_populates=(\"UserRoleList\"))"
+        },
+        {
+            "classname": "UserTeam",
+            "code": "class UserTeam(Base):  # type: ignore\n    \"\"\"\n    description: Associative table connecting users with teams.\n    \"\"\"\n    __tablename__ = 'user_team'\n    _s_collection_name = 'UserTeam'  # type: ignore\n\n    id = Column(Integer, primary_key=True)\n    user_id = Column(ForeignKey('user.id'))\n    team_id = Column(ForeignKey('team.id'))\n\n    # parent relationships (access parent)\n    team : Mapped[\"Team\"] = relationship(back_populates=(\"UserTeamList\"))\n    user : Mapped[\"User\"] = relationship(back_populates=(\"UserTeamList\"))"
+        }
+    ]
+}
