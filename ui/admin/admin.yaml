@@ -1,0 +1,318 @@
+about:
+  date: January 29, 2025 07:37:00
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 11
+  number_tables: 12
+info_toggle_checked: true
+resources:
+  Asset:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: owner_id
+    - name: description
+    - name: id
+    description: Represents assets owned by users.
+    info_list: Represents assets owned by users.
+    tab_groups:
+    - direction: toone
+      fks:
+      - owner_id
+      name: owner
+      resource: User
+    type: Asset
+    user_key: name
+  AuditLog:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: user_id
+    - name: action
+    - name: timestamp
+      type: DATETIME
+    description: Keeps track of user activities.
+    info_list: Keeps track of user activities.
+    tab_groups:
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: AuditLog
+    user_key: id
+  Configuration:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: key
+    - name: value
+    description: Stores various system configuration settings.
+    info_list: Stores various system configuration settings.
+    type: Configuration
+    user_key: id
+  Department:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: head_id
+    - name: id
+    description: Defines departments within the company.
+    info_list: Defines departments within the company.
+    tab_groups:
+    - direction: toone
+      fks:
+      - head_id
+      name: head
+      resource: User
+    type: Department
+    user_key: name
+  Profile:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: user_id
+    - name: bio
+    - name: date_of_birth
+      type: DATE
+    description: Stores additional info about the user.
+    info_list: Stores additional info about the user.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - profile_id
+      name: UserList
+      resource: User
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: Profile
+    user_key: id
+  Project:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: lead_id
+    - name: description
+    - name: id
+    description: Represents projects within the organization.
+    info_list: Represents projects within the organization.
+    tab_groups:
+    - direction: toone
+      fks:
+      - lead_id
+      name: lead
+      resource: User
+    type: Project
+    user_key: name
+  Role:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: description
+    - name: id
+    description: Defines different roles within the system.
+    info_list: Defines different roles within the system.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - role_id
+      name: UserRoleList
+      resource: UserRole
+    type: Role
+    user_key: name
+  Task:
+    attributes:
+    - label: ' description*'
+      name: description
+      search: true
+      sort: true
+    - name: assigned_to_id
+    - name: title
+    - name: status
+    - name: id
+    description: Represents tasks assigned to users.
+    info_list: Represents tasks assigned to users.
+    tab_groups:
+    - direction: toone
+      fks:
+      - assigned_to_id
+      name: assigned_to
+      resource: User
+    type: Task
+    user_key: description
+  Team:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: description
+    - name: id
+    description: Represents a team within the system.
+    info_list: Represents a team within the system.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - team_id
+      name: UserTeamList
+      resource: UserTeam
+    type: Team
+    user_key: name
+  User:
+    attributes:
+    - label: ' name*'
+      name: name
+      search: true
+      sort: true
+    - name: profile_id
+    - name: email
+    - name: created_at
+      type: DATETIME
+    - name: id
+    description: Represents a system user.
+    info_list: Represents a system user.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - owner_id
+      name: AssetList
+      resource: Asset
+    - direction: tomany
+      fks:
+      - user_id
+      name: AuditLogList
+      resource: AuditLog
+    - direction: tomany
+      fks:
+      - head_id
+      name: DepartmentList
+      resource: Department
+    - direction: tomany
+      fks:
+      - user_id
+      name: ProfileList
+      resource: Profile
+    - direction: tomany
+      fks:
+      - lead_id
+      name: ProjectList
+      resource: Project
+    - direction: tomany
+      fks:
+      - assigned_to_id
+      name: TaskList
+      resource: Task
+    - direction: tomany
+      fks:
+      - user_id
+      name: UserRoleList
+      resource: UserRole
+    - direction: tomany
+      fks:
+      - user_id
+      name: UserTeamList
+      resource: UserTeam
+    - direction: toone
+      fks:
+      - profile_id
+      name: profile
+      resource: Profile
+    type: User
+    user_key: name
+  UserRole:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: role_id
+    - name: user_id
+    description: Associative table connecting users with roles.
+    info_list: Associative table connecting users with roles.
+    tab_groups:
+    - direction: toone
+      fks:
+      - role_id
+      name: role
+      resource: Role
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: UserRole
+    user_key: id
+  UserTeam:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: team_id
+    - name: user_id
+    description: Associative table connecting users with teams.
+    info_list: Associative table connecting users with teams.
+    tab_groups:
+    - direction: toone
+      fks:
+      - team_id
+      name: team
+      resource: Team
+    - direction: toone
+      fks:
+      - user_id
+      name: user
+      resource: User
+    type: UserTeam
+    user_key: id
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: OntimizeEE
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'
